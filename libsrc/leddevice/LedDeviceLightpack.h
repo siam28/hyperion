@@ -9,23 +9,23 @@
 #include <hidapi/hidapi.h>
 
 // Hyperion includes
-#include <hyperion/LedDevice.h>
+#include <leddevice/LedDevice.h>
 
 ///
 /// LedDevice implementation for a lightpack device (http://code.google.com/p/light-pack/)
 ///
-class LedDeviceLightpackHidapi : public LedDevice
+class LedDeviceLightpack : public LedDevice
 {
 public:
 	///
 	/// Constructs the LedDeviceLightpack
 	///
-	LedDeviceLightpackHidapi();
+	LedDeviceLightpack();
 
 	///
 	/// Destructor of the LedDevice; closes the output device if it is open
 	///
-	virtual ~LedDeviceLightpackHidapi();
+	virtual ~LedDeviceLightpack();
 
 	///
 	/// Opens and configures the output device
