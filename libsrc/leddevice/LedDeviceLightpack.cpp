@@ -4,7 +4,7 @@
 #include <wchar.h>
 
 // Local Hyperion includes
-#include "LedDeviceLightpack-hidapi.h"
+#include "LedDeviceLightpack.h"
 
 // from USB_ID.h (http://code.google.com/p/light-pack/source/browse/CommonHeaders/USB_ID.h)
 #define USB_OLD_VENDOR_ID  0x03EB
@@ -33,7 +33,7 @@ enum DATA_VERSION_INDEXES{
 	INDEX_FW_VER_MINOR
 };
 
-LedDeviceLightpackHidapi::LedDeviceLightpackHidapi() :
+LedDeviceLightpack::LedDeviceLightpack() :
 	LedDevice(),
 	_deviceHandle(nullptr),
 	_serialNumber(""),
@@ -44,7 +44,7 @@ LedDeviceLightpackHidapi::LedDeviceLightpackHidapi() :
 {
 }
 
-LedDeviceLightpackHidapi::~LedDeviceLightpackHidapi()
+LedDeviceLightpack::~LedDeviceLightpack()
 {
 	if (_deviceHandle != nullptr)
 	{
@@ -56,7 +56,7 @@ LedDeviceLightpackHidapi::~LedDeviceLightpackHidapi()
 	//hid_exit();
 }
 
-int LedDeviceLightpackHidapi::open(const std::string & serialNumber)
+int LedDeviceLightpack::open(const std::string & serialNumber)
 {
 	// initialize the usb context
 	int error = hid_init();
@@ -101,7 +101,7 @@ int LedDeviceLightpackHidapi::open(const std::string & serialNumber)
 	return _deviceHandle == nullptr ? -1 : 0;
 }
 
-int LedDeviceLightpackHidapi::testAndOpen(hid_device_info *device, const std::string & requestedSerialNumber)
+int LedDeviceLightpack::testAndOpen(hid_device_info *device, const std::string & requestedSerialNumber)
 {
 	if ((device->vendor_id == USB_VENDOR_ID && device->product_id == USB_PRODUCT_ID) ||
 		(device->vendor_id == USB_OLD_VENDOR_ID && device->product_id == USB_OLD_PRODUCT_ID))
@@ -203,12 +203,12 @@ int LedDeviceLightpackHidapi::testAndOpen(hid_device_info *device, const std::st
 	return -1;
 }
 
-int LedDeviceLightpackHidapi::write(const std::vector<ColorRgb> &ledValues)
+int LedDeviceLightpack::write(const std::vector<ColorRgb> &ledValues)
 {
 	return write(ledValues.data(), ledValues.size());
 }
 
-int LedDeviceLightpackHidapi::write(const ColorRgb * ledValues, int size)
+int LedDeviceLightpack::write(const ColorRgb * ledValues, int size)
 {
 	int count = std::min(_ledCount, size);
 
@@ -231,23 +231,23 @@ int LedDeviceLightpackHidapi::write(const ColorRgb * ledValues, int size)
 	return error >= 0 ? 0 : error;
 }
 
-int LedDeviceLightpackHidapi::switchOff()
+int LedDeviceLightpack::switchOff()
 {
 	unsigned char buf[2] = {0x0, CMD_OFF_ALL};
 	return writeBytes(buf, sizeof(buf)) == sizeof(buf);
 }
 
-const std::string &LedDeviceLightpackHidapi::getSerialNumber() const
+const std::string &LedDeviceLightpack::getSerialNumber() const
 {
 	return _serialNumber;
 }
 
-int LedDeviceLightpackHidapi::getLedCount() const
+int LedDeviceLightpack::getLedCount() const
 {
 	return _ledCount;
 }
 
-int LedDeviceLightpackHidapi::writeBytes(uint8_t *data, int size)
+int LedDeviceLightpack::writeBytes(uint8_t *data, int size)
 {
 //	std::cout << "Writing " << size << " bytes: ";
 //	for (int i = 0; i < size ; ++i) printf("%02x ", data[i]);
@@ -263,7 +263,7 @@ int LedDeviceLightpackHidapi::writeBytes(uint8_t *data, int size)
 	return error;
 }
 
-int LedDeviceLightpackHidapi::disableSmoothing()
+int LedDeviceLightpack::disableSmoothing()
 {
 	unsigned char buf[2] = {CMD_SET_SMOOTH_SLOWDOWN, 0};
 	return writeBytes(buf, sizeof(buf)) == sizeof(buf);
